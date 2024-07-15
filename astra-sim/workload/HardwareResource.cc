@@ -4,6 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "astra-sim/workload/HardwareResource.hh"
+#include <iostream>
 
 using namespace std;
 using namespace AstraSim;

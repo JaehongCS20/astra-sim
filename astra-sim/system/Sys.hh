@@ -244,6 +244,7 @@ class Sys : public Callable {
 
   // memory
   double local_mem_bw;
+  uint64_t local_mem_size;
   AstraRemoteMemoryAPI* remote_mem;
 
   // memory bus

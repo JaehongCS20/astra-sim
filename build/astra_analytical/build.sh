@@ -53,6 +53,7 @@ case "$1" in
   cleanup
   ;;
 *)
+  cleanup
   setup
   compile
   create_symlinks

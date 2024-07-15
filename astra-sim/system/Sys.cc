@@ -778,7 +778,6 @@ DataSet* Sys::generate_collective(
       last_scheduled_collective = Sys::boostedTick();
     }
   }
-
   while (size > 0) {
     count++;
 

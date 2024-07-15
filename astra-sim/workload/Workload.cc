@@ -43,10 +43,14 @@ Workload::Workload(Sys* sys, string eg_filename, string comm_group_filename) {
   this->et_feeder = new ETFeeder(workload_filename);
   this->comm_group = nullptr;
   // TODO: parametrize the number of available hardware resources
+  // Workload is in each system(NPU)
+  // We can handle LOCAL memory with this hw_resource
   this->hw_resource = new HardwareResource(1);
   this->sys = sys;
   initialize_comm_group(comm_group_filename);
   this->is_finished = false;
+  this->iteration = 0;
+  this->filename = eg_filename;
 }
 
 Workload::~Workload() {
@@ -100,6 +104,8 @@ void Workload::issue_dep_free_nodes() {
     }
     node = et_feeder->getNextIssuableNode();
   }
+  // if there is no available node anymore, this does nothing
+  // cout << "Nothing to issue... " << endl;
 
   while (!push_back_queue.empty()) {
     shared_ptr<Chakra::ETFeederNode> node = push_back_queue.front();
@@ -152,7 +158,16 @@ void Workload::issue_remote_mem(shared_ptr<Chakra::ETFeederNode> node) {
   wlhd->sys_id = sys->id;
   wlhd->workload = this;
   wlhd->node_id = node->getChakraNode()->id();
-  sys->remote_mem->issue(node->getChakraNode()->tensor_size(), wlhd);
+  // check if it is loading input
+  if (node->getChakraNode()->name().find("INPUT") != string::npos){
+      sys->remote_mem->issue(node->getChakraNode()->input_tensor_size(), wlhd);
+  }
+  else if (node->getChakraNode()->name().find("OUTPUT") != string::npos){ // storing output
+    sys->remote_mem->issue(node->getChakraNode()->output_tensor_size(), wlhd);
+  }
+  else{ // loading weight
+    sys->remote_mem->issue(node->getChakraNode()->tensor_size(), wlhd);
+  }
 }
 
 void Workload::issue_comp(shared_ptr<Chakra::ETFeederNode> node) {
@@ -335,13 +350,47 @@ void Workload::call(EventType event, CallData* data) {
     }
   }
 
+  // check number of in_flight requests
+  // cout << "sys[" << sys->id << "] "<< "mem:" << hw_resource->num_in_flight_mem_reqs 
+  // << " comps:" << hw_resource->num_in_flight_comps 
+  // << " comms:" <<  hw_resource->num_in_flight_comms << endl;
+
   if (!et_feeder->hasNodesToIssue() &&
       (hw_resource->num_in_flight_mem_reqs == 0) &&
       (hw_resource->num_in_flight_comps == 0) &&
       (hw_resource->num_in_flight_comms == 0)) {
-    report();
+    // report();
     is_finished = true;
   }
+}
+
+void Workload::addWorkload(string new_filename) {
+  string workload_filename = new_filename + "." + to_string(sys->id) + ".eg";
+  // cout << workload_filename << endl;
+
+  // Check if workload filename exists
+  if (access(workload_filename.c_str(), R_OK) < 0) {
+      string error_msg;
+      if (errno == ENOENT) {
+          error_msg = "workload file: " + workload_filename + " does not exist";
+      } else if (errno == EACCES) {
+          error_msg = "workload file: " + workload_filename + " exists but is not readable";
+      } else {
+          error_msg = "Unknown workload file: " + workload_filename + " access error";
+      }
+      // now more new workloads
+      cout << error_msg << endl;
+      return;
+  }
+
+  // there exists new workload, change the ETFeeder
+  if (this->et_feeder != nullptr)
+    delete this->et_feeder;
+  this->et_feeder = new ETFeeder(workload_filename);
+  iteration++;
+  is_finished = false;
+  // fire next iteration
+  fire();
 }
 
 void Workload::fire() {
@@ -350,5 +399,5 @@ void Workload::fire() {
 
 void Workload::report() {
   Tick curr_tick = Sys::boostedTick();
-  cout << "sys[" << sys->id << "] finished, " << curr_tick << " cycles" << endl;
+  cout << "sys[" << sys->id << "] iteration " << iteration << " finished, " << curr_tick << " cycles" << endl;
 }

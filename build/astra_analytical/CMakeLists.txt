@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "-O3 -Wall")
+# make it gdb/lldb debuggable with -g
+#set(CMAKE_CXX_FLAGS "-O3 -Wall")
+set(CMAKE_CXX_FLAGS "-O0 -Wall -g")
 
 # Setup project
 project(AstraSim_Analytical)
