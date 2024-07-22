@@ -5,7 +5,7 @@
   "dimensions-count": 1,
   "units-count": [4],
   "links-count": [3],
-  "link-latency": [100],
+  "link-latency": [0],
   "link-bandwidth": [64],
   "nic-latency": [0],
   "router-latency": [0],

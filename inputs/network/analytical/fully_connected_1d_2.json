@@ -5,11 +5,11 @@
   "dimensions-count": 1,
   "units-count": [2],
   "links-count": [1],
-  "link-latency": [50000],
+  "link-latency": [0],
   "link-bandwidth": [64],
   "nic-latency": [0],
   "router-latency": [0],
-  "hbm-latency": [1],
+  "hbm-latency": [0],
   "hbm-bandwidth": [936],
   "hbm-scale": [0]
 }

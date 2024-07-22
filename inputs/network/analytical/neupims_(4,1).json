@@ -6,7 +6,7 @@
   "units-count": [32],
   "links-count": [31],
   "link-latency": [0],
-  "link-bandwidth": [64],
+  "link-bandwidth": [1000000000000],
   "nic-latency": [0],
   "router-latency": [0],
   "hbm-latency": [0],

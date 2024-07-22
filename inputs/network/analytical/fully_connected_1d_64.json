@@ -10,6 +10,6 @@
   "nic-latency": [0],
   "router-latency": [0],
   "hbm-latency": [0],
-  "hbm-bandwidth": [936],
+  "hbm-bandwidth": [1024],
   "hbm-scale": [0]
 }
