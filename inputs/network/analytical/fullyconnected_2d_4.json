@@ -1,0 +1,48 @@
+{
+  "topology-name": "Hierarchical",
+  "topologies-per-dim": [
+    "FullyConnected",
+    "FullyConnected"
+  ],
+  "dimension-type": [
+    "N",
+    "N"
+  ],
+  "dimensions-count": 2,
+  "units-count": [
+    2,
+    2
+  ],
+  "links-count": [
+    1,
+    1
+  ],
+  "link-latency": [
+    0,
+    0
+  ],
+  "link-bandwidth": [
+    256,
+    256
+  ],
+  "nic-latency": [
+    0,
+    0
+  ],
+  "router-latency": [
+    0,
+    0
+  ],
+  "hbm-latency": [
+    0,
+    0
+  ],
+  "hbm-bandwidth": [
+    1024,
+    1024
+  ],
+  "hbm-scale": [
+    0,
+    0
+  ]
+}
